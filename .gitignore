@@ -1,0 +1,11 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+venv/
+db.sqlite3
+
+# Node / Angular
+node_modules/
+.angular/
+.vscode/
+dist/
