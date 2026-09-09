@@ -1,0 +1,1 @@
+from .auth_views import CustomLoginView, rejestracja_view
