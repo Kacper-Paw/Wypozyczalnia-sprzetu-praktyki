@@ -1,0 +1,61 @@
+<div style="padding: 20px;">
+  <h2>Katalog sprzętu</h2>
+
+  <!-- Pasek wyszukiwania i filtrów -->
+  <div style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Szukaj nazwy lub nr inwentarzowego..." style="padding: 5px; width: 250px;">
+    <label>
+      <input type="checkbox" [(ngModel)]="onlyAvailable"> Tylko dostępne
+    </label>
+    <button (click)="wczytajSprzet()">Szukaj</button>
+  </div>
+
+  <!-- Tabela sprzętu -->
+  <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color: #f2f2f2;">
+        <th>Nazwa</th>
+        <th>Nr inwentarzowy</th>
+        <th>Kategoria</th>
+        <th>Stan</th>
+        <th>Akcja</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of sprzety">
+        <td>{{ s.nazwa }}</td>
+        <td>{{ s.numer_inwentarzowy }}</td>
+        <td>{{ s.kategoria }}</td>
+        <td>{{ s.dostepnosc ? 'Dostępny' : 'Wypożyczony' }}</td>
+        <td>
+          <button *ngIf="s.dostepnosc" (click)="otworzModal(s.id)" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+            Wypożycz
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="sprzety.length === 0">
+        <td colspan="5" style="text-align: center;">Brak sprzętu do wyświetlenia.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Komunikaty nad lub pod tabelą -->
+<p *ngIf="successMessage" style="color: green;">{{ successMessage }}</p>
+
+<!-- okienko wyskakujace po kliknieciu w przycisk wypozycz -->
+<div *ngIf="selectedSprzetId" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+  <div style="background: white; padding: 20px; border-radius: 8px; width: 300px;">
+    <h3>Potwierdzenie wypożyczenia</h3>
+    
+    <label>Planowana data zwrotu:</label><br>
+    <input type="date" [(ngModel)]="planowanaDataZwrotu" style="width: 100%; margin-top: 5px; margin-bottom: 15px; padding: 5px;"><br>
+
+    <p *ngIf="errorMessage" style="color: red; font-size: 13px;">{{ errorMessage }}</p>
+
+    <div style="display: flex; justify-content: space-between;">
+      <button (click)="potwierdzWypozyczenie()" style="background-color: #007bff; color: white; border: none; padding: 6px 12px; cursor: pointer;">Potwierdź</button>
+      <button (click)="zamknijModal()" style="background-color: #6c757d; color: white; border: none; padding: 6px 12px; cursor: pointer;">Anuluj</button>
+    </div>
+  </div>
+</div>
