@@ -24,10 +24,10 @@ export class SprzetService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  wypozyczSprzet(sprzetId: number, dataZwrotu: string): Observable<any> {
-    return this.http.post<any>('http://127.0.0.1:8000/api/wypozyczenia/', {
-      sprzet_id: sprzetId,
-      planowana_data_zwrotu: dataZwrotu
-    });
-  }
+  wypozyczSprzet(sprzetId: number, planowanaDataZwrotu: string) {
+  return this.http.post('http://127.0.0.1:8000/api/sprzet/wypozyczenia/', {
+    sprzet: sprzetId,
+    planowana_data_zwrotu: planowanaDataZwrotu
+  });
+}
 }

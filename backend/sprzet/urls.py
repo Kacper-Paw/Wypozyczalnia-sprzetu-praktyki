@@ -1,7 +1,7 @@
 from django.urls import path
-from . import views
-
+from .views.Equipment_views import lista_sprzetu, wypozycz_sprzet
 
 urlpatterns = [
-    path('', views.lista_sprzetu),
+    path('', lista_sprzetu, name='lista-sprzetu'),
+    path('wypozyczenia/', wypozycz_sprzet, name='wypozycz-sprzet'),
 ]
