@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SprzetService } from '../../services/sprzet';
 import { Sprzet } from '../../models/sprzet';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-sprzet-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './sprzet-list.html',
   styleUrl: './sprzet-list.css'
 })

@@ -30,4 +30,8 @@ export class SprzetService {
     planowana_data_zwrotu: planowanaDataZwrotu
   });
 }
+// Pobieranie szczegółów sprzętu / API
+getSprzetSzczegoly(id: number): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}${id}/`);
+}
 }

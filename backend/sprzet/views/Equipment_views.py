@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from ..serializers import SprzetSerializer, SprzetDetailSerializer
 
 from ..models import Sprzet, Wypozyczenie
 from ..serializers import SprzetSerializer
@@ -50,3 +51,17 @@ def wypozycz_sprzet(request):
     )
 
     return Response({'detail': 'Pomyślnie wypożyczono sprzęt!'}, status=status.HTTP_201_CREATED)
+
+#
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def szczegoly_sprzetu(request, pk):
+    try:
+        sprzet = Sprzet.objects.get(pk=pk, is_wycofany=False)
+    except Sprzet.DoesNotExist:
+        return Response({'detail': 'Nie znaleziono sprzętu.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Przekazujemy context aby serializer sprawdził role użytkownika i zwrócił e-maila
+    serializer = SprzetDetailSerializer(sprzet, context={'request': request})
+    return Response(serializer.data)

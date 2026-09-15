@@ -1,0 +1,65 @@
+<div class="container my-4">
+  <a routerLink="/sprzet" class="btn btn-outline-secondary mb-3">&larr; Powrót do katalogu</a>
+
+  <div *ngIf="loading" class="alert alert-info">
+    Ładowanie danych przedmiotu...
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && sprzet">
+    <!-- KARTA INFORMACJI O SPRZĘCIE -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">{{ sprzet.nazwa }}</h3>
+      </div>
+      <div class="card-body">
+        <p><strong>Kategoria:</strong> {{ sprzet.kategoria_nazwa || sprzet.kategoria }}</p>
+        <p><strong>Opis:</strong> {{ sprzet.opis || 'Brak opisu' }}</p>
+        <p>
+          <strong>Dostępność:</strong>
+          <span *ngIf="sprzet.dostepnosc || sprzet.czy_dostepny" class="badge bg-success">Dostępny</span>
+          <span *ngIf="!sprzet.dostepnosc && !sprzet.czy_dostepny" class="badge bg-secondary">Wypożyczony</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- TABELA Z HISTORIĄ WYPOŻYCZEŃ -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-dark text-white">
+        <h4 class="mb-0">Historia wypożyczeń przedmiotu</h4>
+      </div>
+      <div class="card-body">
+        <table class="table table-striped" *ngIf="sprzet.wypozyczenia && sprzet.wypozyczenia.length > 0; else brakHistorii">
+          <thead>
+            <tr>
+              <th>Użytkownik</th>
+              <th>Data wypożyczenia</th>
+              <th>Planowana data zwrotu</th>
+              <th>Faktyczna data zwrotu</th>
+              <th>Stan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of sprzet.wypozyczenia">
+              <td>{{ item.uzytkownik_email || item.uzytkownik || item.user }}</td>
+              <td>{{ item.data_wypozyczenia }}</td>
+              <td>{{ item.planowana_data_zwrotu }}</td>
+              <td>{{ item.data_zwrotu || '—' }}</td>
+              <td>
+                <span *ngIf="item.is_aktywne" class="badge bg-warning text-dark">W trakcie</span>
+                <span *ngIf="!item.is_aktywne" class="badge bg-secondary">Zwrócono</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #brakHistorii>
+          <p class="text-muted mb-0">Ten przedmiot nie ma jeszcze historii wypożyczeń.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

@@ -22,13 +22,9 @@
     </thead>
     <tbody>
       <tr *ngFor="let s of sprzety">
-        <td>
-          <button type="button" 
-                  (click)="otworzSzczegoly(s)" 
-                  style="background: none; border: none; color: #007bff; text-decoration: underline; cursor: pointer; padding: 0; font: inherit;">
-            {{ s.nazwa }}
-          </button>
-        </td>
+       <td>
+  <a [routerLink]="['/sprzet', s.id]">{{ s.nazwa }}</a>
+</td>
         <td>{{ s.kategoria }}</td>
         <td>{{ s.dostepnosc ? 'Dostępny' : 'Wypożyczony' }}</td>
         <td>
