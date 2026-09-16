@@ -96,11 +96,12 @@ export class SprzetListComponent implements OnInit {
 
     this.sprzetService.wypozyczSprzet(this.selectedSprzetId, this.planowanaDataZwrotu).subscribe({
       next: () => {
-        this.successMessage = 'Pomyślnie wypożyczono sprzęt!';
+        this.successMessage = 'Sprzęt został wypożyczony.';
+        this.errorMessage = '';
         this.zamknijModal();
-        this.wczytajSprzet(); // Pobiera odświeżoną listę / zmienia status wypożyczenia
+        this.wczytajSprzet(this.currentPage);
       },
-      error: (err) => {
+      error: (err: any) => {
         // Odbiera komunikat odmowy z backendu
         this.errorMessage = err.error?.detail || err.error?.message || 'Nie udało się wypożyczyć sprzętu.';
       }

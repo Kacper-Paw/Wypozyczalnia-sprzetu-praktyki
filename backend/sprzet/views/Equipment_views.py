@@ -2,15 +2,31 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from ..serializers import SprzetSerializer, SprzetDetailSerializer
+from django.db.models import Q
 
 from ..models import Sprzet, Wypozyczenie
-from ..serializers import SprzetSerializer
+from ..serializers import SprzetSerializer, SprzetDetailSerializer
 
 
 @api_view(['GET'])
 def lista_sprzetu(request):
     sprzet = Sprzet.objects.all()
+
+    # Wyciągamy parametry wyszukiwania z zapytania Angulara
+    dostepnosc = request.query_params.get('dostepnosc', None)
+    search = request.query_params.get('search', None)
+
+    # 1. Filtrowanie po dostępności
+    if dostepnosc is not None and dostepnosc != '':
+        is_available = dostepnosc.lower() == 'true'
+        sprzet = sprzet.filter(dostepnosc=is_available)
+
+    # 2. Wyszukiwanie po nazwie lub kategorii
+    if search:
+        sprzet = sprzet.filter(
+            Q(nazwa__icontains=search) | Q(kategoria__icontains=search)
+        )
+
     serializer = SprzetSerializer(sprzet, many=True)
     return Response(serializer.data)
 
@@ -20,7 +36,7 @@ def lista_sprzetu(request):
 def wypozycz_sprzet(request):
     user = request.user
 
-    # 1. Sprawdzamy limit max 3 aktywnych wypożyczeń dla użytkownika
+    # Sprawdzamy limit max 3 aktywnych wypożyczeń dla użytkownika
     aktywne_wypozyczenia = Wypozyczenie.objects.filter(uzytkownik=user, data_zwrotu__isnull=True).count()
     if aktywne_wypozyczenia >= 3:
         return Response(
@@ -28,7 +44,6 @@ def wypozycz_sprzet(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # 2. Pobieramy dane z żądania Angulara
     sprzet_id = request.data.get('sprzet')
     planowana_data = request.data.get('planowana_data_zwrotu')
 
@@ -40,7 +55,6 @@ def wypozycz_sprzet(request):
     if not sprzet.dostepnosc:
         return Response({'detail': 'Ten sprzęt jest już wypożyczony!'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 3. Zmieniamy dostępność sprzętu i tworzmy rekord wypożyczenia
     sprzet.dostepnosc = False
     sprzet.save()
 
@@ -52,7 +66,6 @@ def wypozycz_sprzet(request):
 
     return Response({'detail': 'Pomyślnie wypożyczono sprzęt!'}, status=status.HTTP_201_CREATED)
 
-#
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -62,6 +75,5 @@ def szczegoly_sprzetu(request, pk):
     except Sprzet.DoesNotExist:
         return Response({'detail': 'Nie znaleziono sprzętu.'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Przekazujemy context aby serializer sprawdził role użytkownika i zwrócił e-maila
     serializer = SprzetDetailSerializer(sprzet, context={'request': request})
     return Response(serializer.data)
