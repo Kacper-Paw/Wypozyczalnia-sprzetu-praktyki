@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Q
+from django.utils import timezone
 
 from ..models import Sprzet, Wypozyczenie
 from ..serializers import SprzetSerializer, SprzetDetailSerializer
@@ -57,7 +58,7 @@ def wypozycz_sprzet(request):
 
     sprzet.dostepnosc = False
     sprzet.save()
-
+# Tworzymy nowe wypożyczenie
     Wypozyczenie.objects.create(
         uzytkownik=user,
         sprzet=sprzet,
@@ -77,3 +78,37 @@ def szczegoly_sprzetu(request, pk):
 
     serializer = SprzetDetailSerializer(sprzet, context={'request': request})
     return Response(serializer.data)
+
+# Widok wypożyczeń użytkownika - Zakładka 4
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def moje_wypozyczenia(request):
+    dzis = timezone.now().date()
+    # Pobieramy wszystkie wypożyczenia użytkownika, wraz z powiązanym sprzętem
+    wypozyczenia = Wypozyczenie.objects.filter(uzytkownik=request.user).select_related('sprzet')
+
+    aktywne = []
+    zakonczone = []
+
+    for w in wypozyczenia:
+        is_przeterminowane = (w.data_zwrotu is None) and (w.planowana_data_zwrotu < dzis)
+        
+        item_data = {
+            'id': w.id,
+            'sprzet_id': w.sprzet.id,
+            'sprzet_nazwa': w.sprzet.nazwa,
+            'data_wypozyczenia': w.data_wypozyczenia,
+            'planowana_data_zwrotu': w.planowana_data_zwrotu,
+            'data_zwrotu': w.data_zwrotu,
+            'is_przeterminowane': is_przeterminowane
+        }
+# data_zwrotu jest None oznacza, że wypożyczenie jest aktywne, w przeciwnym razie jest zakończone
+        if w.data_zwrotu is None:
+            aktywne.append(item_data)
+        else:
+            zakonczone.append(item_data)
+
+    return Response({
+        'aktywne': aktywne,
+        'zakonczone': zakonczone
+    })

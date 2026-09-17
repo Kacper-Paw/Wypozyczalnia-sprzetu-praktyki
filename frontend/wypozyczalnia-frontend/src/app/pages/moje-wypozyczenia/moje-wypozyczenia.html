@@ -1,0 +1,68 @@
+<div style="padding: 20px; max-width: 900px; margin: 0 auto;">
+  <h2>Moje Wypożyczenia</h2>
+
+  <div *ngIf="loading">Ładowanie Twoich wypożyczeń...</div>
+
+  <div *ngIf="!loading">
+    <!-- SEKCJA 1: AKTYWNE -->
+    <h3>Aktywne wypożyczenia</h3>
+    <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+          <th>Przedmiot</th>
+          <th>Data wypożyczenia</th>
+          <th>Planowana data zwrotu</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of aktywne" [style.background-color]="item.is_przeterminowane ? '#f8d7da' : 'transparent'">
+          <td>
+            <a [routerLink]="['/sprzet', item.sprzet_id]" style="font-weight: bold; color: #007bff;">
+              {{ item.sprzet_nazwa }}
+            </a>
+          </td>
+          <td>{{ item.data_wypozyczenia }}</td>
+          <td>{{ item.planowana_data_zwrotu }}</td>
+          <td>
+            <span *ngIf="item.is_przeterminowane" style="color: #721c24; font-weight: bold;">
+              ⚠️ Po terminie
+            </span>
+            <span *ngIf="!item.is_przeterminowane" style="color: green;">
+              W trakcie
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="aktywne.length === 0">
+          <td colspan="4" style="text-align: center; color: #6c757d;">Brak aktywnych wypożyczeń.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- SEKCJA 2: ZAKOŃCZONE -->
+    <h3>Zakończone wypożyczenia</h3>
+    <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+          <th>Przedmiot</th>
+          <th>Data wypożyczenia</th>
+          <th>Data zwrotu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of zakonczone">
+          <td>
+            <a [routerLink]="['/sprzet', item.sprzet_id]" style="font-weight: bold; color: #007bff;">
+              {{ item.sprzet_nazwa }}
+            </a>
+          </td>
+          <td>{{ item.data_wypozyczenia }}</td>
+          <td>{{ item.data_zwrotu }}</td>
+        </tr>
+        <tr *ngIf="zakonczone.length === 0">
+          <td colspan="3" style="text-align: center; color: #6c757d;">Brak zakończonych wypożyczeń.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

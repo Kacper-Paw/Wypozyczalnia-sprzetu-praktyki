@@ -35,4 +35,7 @@ export class SprzetService {
       planowana_data_zwrotu: planowanaDataZwrotu
     });
   }
+  pobierzMojeWypozyczenia() {
+  return this.http.get<any>('http://127.0.0.1:8000/api/sprzet/moje-wypozyczenia/');
+}
 }
