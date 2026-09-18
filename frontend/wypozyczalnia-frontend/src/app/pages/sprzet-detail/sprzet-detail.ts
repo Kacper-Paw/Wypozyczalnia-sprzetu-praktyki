@@ -64,6 +64,7 @@ import { SprzetService } from '../../services/sprzet';
   templateUrl: './sprzet-detail.html',
   styleUrl: './sprzet-detail.css'
 })
+
 export class SprzetDetailComponent implements OnInit {
   sprzet: any = null;
   loading: boolean = true;
@@ -88,6 +89,7 @@ export class SprzetDetailComponent implements OnInit {
           this.cdr.detectChanges(); // Wymusza aktualizację widoku po zmianie danych
         },
         error: (err: any) => {
+          // Sekcja obsługi błędów, jeśli wystąpi problem z pobraniem szczegółów sprzętu
           console.error(err);
           this.errorMessage = 'Nie udało się pobrać szczegółów sprzętu.';
           this.loading = false;
