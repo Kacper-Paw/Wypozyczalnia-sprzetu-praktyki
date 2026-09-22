@@ -5,6 +5,7 @@ import { SprzetListComponent } from './components/sprzet-list/sprzet-list';
 import { authGuard } from './guards/auth.guard';
 import { SprzetDetailComponent } from './pages/sprzet-detail/sprzet-detail';
 import { MojeWypozyczeniaComponent } from './pages/moje-wypozyczenia/moje-wypozyczenia';
+import { adminGuard } from './guards/admin.guard';
 
 
 // ścieżki routingu dla aplikacji, logowanie i rejestrowanie użytkownika. 
@@ -16,4 +17,9 @@ export const routes: Routes = [
   { path: '', redirectTo: '/sprzet', pathMatch: 'full' },
   { path: 'sprzet/:id', component: SprzetDetailComponent, canActivate: [authGuard] },
   { path: 'moje-wypozyczenia', component: MojeWypozyczeniaComponent, canActivate: [authGuard] },
+  {
+    path: 'admin',
+    loadComponent: () => import('./components/admin-panel/admin-panel').then(m => m.AdminPanelComponent),
+    canActivate: [adminGuard]
+  }
 ];

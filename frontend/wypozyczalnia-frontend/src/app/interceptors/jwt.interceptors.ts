@@ -20,7 +20,7 @@ export class JwtInterceptor implements HttpInterceptor {
     if (token) {
       request = this.addTokenHeader(request, token);
     }
-
+    // Obsługa błędów HTTP, w tym przypadku 401 Unauthorized
     return next.handle(request).pipe(
       catchError(error => {
         // jeśli serwer zwróci błąd 401 i to nie było logowanie

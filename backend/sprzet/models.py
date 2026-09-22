@@ -11,7 +11,7 @@ class Sprzet(models.Model):
 
     def __str__(self):
         return f"{self.nazwa} ({self.nr_inwentarzowy})"
-
+# Model reprezentujący wypożyczenie sprzętu
 class Wypozyczenie(models.Model):
     uzytkownik = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='wypozyczenia')
     sprzet = models.ForeignKey(Sprzet, on_delete=models.CASCADE, related_name='wypozyczenia')

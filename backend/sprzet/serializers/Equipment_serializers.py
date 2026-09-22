@@ -13,6 +13,7 @@ class WypozyczenieHistoriaSerializer(serializers.ModelSerializer):
         model = Wypozyczenie
         fields = ['id', 'data_wypozyczenia', 'planowana_data_zwrotu', 'data_zwrotu', 'uzytkownik_email']
 
+# zmienna get_uzytkownik_email służy żeby sprawdzać czy użytkownik korzystający jest admin'em. jeśli tak. to pokazuje w wypożyczeniu email wypożyczającego.
     def get_uzytkownik_email(self, obj):
         request = self.context.get('request')
         if request and request.user.is_staff:

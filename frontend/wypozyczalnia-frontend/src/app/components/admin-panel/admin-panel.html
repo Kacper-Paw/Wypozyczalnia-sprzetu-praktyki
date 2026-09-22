@@ -1,0 +1,117 @@
+<div style="padding: 20px;">
+  <h2>Panel Admina</h2>
+
+  <!-- Przełączanie zakładek -->
+  <div style="margin-bottom: 20px;">
+    <button (click)="zmienZakladke('sprzet')" style="margin-right: 10px; padding: 6px 12px;">Sprzęt</button>
+    <button (click)="zmienZakladke('wypozyczenia')" style="padding: 6px 12px;">Wypożyczenia</button>
+  </div>
+
+  <!-- Komunikaty sukcesu i błędu -->
+  <div *ngIf="komunikat" style="color: green; font-weight: bold; margin-bottom: 10px;">
+    {{ komunikat }}
+  </div>
+  <div *ngIf="blad" style="color: red; font-weight: bold; margin-bottom: 10px;">
+    {{ blad }}
+  </div>
+
+  <!-- TAB 1: ZARZĄDZANIE SPRZĘTEM -->
+  <div *ngIf="aktywnaZakladka === 'sprzet'">
+    <button (click)="otworzDodawanie()" style="margin-bottom: 15px;">+ Dodaj sprzęt</button>
+
+    <!-- Formularz dodawania/edycji -->
+    <div *ngIf="pokazFormularz" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; width: 320px;">
+      <h4 *ngIf="!czyEdycja">Dodawanie sprzętu</h4>
+      <h4 *ngIf="czyEdycja">Edycja sprzętu</h4>
+
+      <div style="margin-bottom: 8px;">
+        <label>Nazwa:</label><br>
+        <input type="text" [(ngModel)]="nazwa" style="width: 100%;">
+      </div>
+
+      <div style="margin-bottom: 8px;">
+        <label>Nr inwentarzowy:</label><br>
+        <input type="text" [(ngModel)]="nrInwentarzowy" style="width: 100%;">
+      </div>
+
+      <div style="margin-bottom: 8px;">
+        <label>Kategoria:</label><br>
+        <input type="text" [(ngModel)]="kategoria" style="width: 100%;">
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label>Opis:</label><br>
+        <textarea [(ngModel)]="opis" style="width: 100%;"></textarea>
+      </div>
+
+      <button (click)="zapiszSprzet()">Zapisz</button>
+      <button (click)="pokazFormularz = false" style="margin-left: 5px;">Anuluj</button>
+    </div>
+
+    <!-- Tabela ze sprzętem -->
+    <table border="1" cellpadding="6" style="border-collapse: collapse; width: 100%;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+          <th>ID</th>
+          <th>Nazwa</th>
+          <th>Nr inwentarzowy</th>
+          <th>Kategoria</th>
+          <th>Dostępny</th>
+          <th>Wycofany</th>
+          <th>Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of listaSprzetu">
+          <td>{{ s.id }}</td>
+          <td>{{ s.nazwa }}</td>
+          <td>{{ s.nr_inwentarzowy }}</td>
+          <td>{{ s.kategoria }}</td>
+          <td>{{ s.dostepnosc ? 'Tak' : 'Nie' }}</td>
+          <td>{{ s.is_wycofany ? 'Tak' : 'Nie' }}</td>
+          <td>
+            <button (click)="otworzEdycje(s)">Edytuj</button>
+            <button *ngIf="!s.is_wycofany" (click)="wycofaj(s.id)" style="margin-left: 5px; color: red;">Wycofaj</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TAB 2: ZARZĄDZANIE WYPOŻYCZENIAMI -->
+  <div *ngIf="aktywnaZakladka === 'wypozyczenia'">
+    <div style="margin-bottom: 15px;">
+      <label>Filtruj status: </label>
+      <select [(ngModel)]="filtrStatus" (change)="pobierzWypozyczenia()">
+        <option value="">Wszystkie</option>
+        <option value="aktywne">Tylko aktywne</option>
+        <option value="po_terminie">Tylko po terminie</option>
+      </select>
+    </div>
+
+    <table border="1" cellpadding="6" style="border-collapse: collapse; width: 100%;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+          <th>Użytkownik</th>
+          <th>Sprzęt</th>
+          <th>Data wypożyczenia</th>
+          <th>Planowany zwrot</th>
+          <th>Status</th>
+          <th>Akcja</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let w of listaWypozyczen">
+          <td>{{ w.uzytkownik_email }}</td>
+          <td>{{ w.sprzet_nazwa }} ({{ w.nr_inwentarzowy }})</td>
+          <td>{{ w.data_wypozyczenia }}</td>
+          <td>{{ w.planowana_data_zwrotu }}</td>
+          <td>{{ w.stan }}</td>
+          <td>
+            <button *ngIf="w.stan !== 'zakończone'" (click)="potwierdzZwrot(w.id)">Potwierdź zwrot</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

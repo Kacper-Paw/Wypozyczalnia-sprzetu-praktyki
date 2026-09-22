@@ -48,6 +48,8 @@ export class RegisterComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
+  
+
   onRegister(): void {
   if (this.userData.password !== this.userData.password2) {
     this.errorMessage = 'Hasła nie są identyczne!';
@@ -66,7 +68,7 @@ export class RegisterComponent {
   this.authService.register(payload).subscribe({
     next: () => {
       alert('Konto zostało utworzone! Możesz się teraz zalogować.');
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login']); // Przekierowanie na stronę logowania po udanej rejestracji
     },
     error: (err) => {
       console.log('Błąd z backendu:', err.error); // Wypisze w konsoli przeglądarki (F12) dokładny powód

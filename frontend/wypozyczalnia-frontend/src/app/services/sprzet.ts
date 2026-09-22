@@ -36,6 +36,35 @@ export class SprzetService {
     });
   }
   pobierzMojeWypozyczenia() {
-  return this.http.get<any>('http://127.0.0.1:8000/api/sprzet/moje-wypozyczenia/');
+    return this.http.get<any>('http://127.0.0.1:8000/api/sprzet/moje-wypozyczenia/');
+  }
+
+  // API ADMINA (Zakładka 5) 
+  getAdminSprzet(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}admin/sprzet/`);
+  }
+
+  dodajSprzet(sprzetData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}admin/sprzet/dodaj/`, sprzetData);
+  }
+
+  edytujSprzet(id: number, sprzetData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}admin/sprzet/${id}/edytuj/`, sprzetData);
+  }
+
+  wycofajSprzet(id: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}admin/sprzet/${id}/wycofaj/`, {});
+  }
+
+  getAdminWypozyczenia(statusFilter: string = ''): Observable<any[]> {
+    let params = new HttpParams();
+    if (statusFilter) params = params.set('status', statusFilter);
+    return this.http.get<any[]>(`${this.apiUrl}admin/wypozyczenia/`, { params });
+  }
+
+  potwierdzZwrot(wypozyczenieId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}admin/wypozyczenia/${wypozyczenieId}/zwrot/`, {});
+  }
 }
-}
+
+
