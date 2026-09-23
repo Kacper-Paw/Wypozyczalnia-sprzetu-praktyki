@@ -4,12 +4,14 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from ..serializers import CustomTokenObtainPairSerializer, RejestracjaSerializer
+from ..serializers.auth_serializers import CustomTokenObtainPairSerializer, RejestracjaSerializer
 
-# Widok logowania zwracający tokeny oraz rolę
-class CustomLoginView(TokenObtainPairView):
+# Widok logowania definiujemy pod poprawną nazwą
+class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+# Alias dla wstecznej kompatybilności
+CustomLoginView = CustomTokenObtainPairView
 
 # Widok rejestracji
 @api_view(['POST'])
@@ -19,5 +21,4 @@ def rejestracja_view(request):
     if serializer.is_valid():
         serializer.save()
         return Response({'message': 'Użytkownik został zarejestrowany.'}, status=status.HTTP_201_CREATED)
-    
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

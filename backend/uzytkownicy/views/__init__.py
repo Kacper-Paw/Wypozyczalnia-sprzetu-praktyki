@@ -1,1 +1,1 @@
-from .auth_views import CustomLoginView, rejestracja_view
+from .auth_views import CustomTokenObtainPairView, CustomLoginView, rejestracja_view
